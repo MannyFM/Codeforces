@@ -43,7 +43,7 @@ int main()
 	while (x > 0)
 		x /= 10, sz++;
 	int dec = 1;
-	ans = sz * (n + 1);
+	ans = sz * 1ll * (n + 1);
 	for (int i = 0; i < sz; i++)
 		ans -= dec, dec *= 10;
 	printf(I64, ans);
