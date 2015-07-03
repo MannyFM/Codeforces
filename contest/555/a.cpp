@@ -55,4 +55,3 @@ int main()
 	}
 	printf("%d\n", ans);
 }
-
