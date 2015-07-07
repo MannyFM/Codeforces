@@ -27,7 +27,7 @@ double const pi = acos(-1);
 //#define fn ""
 
 int a, b;
-string s;
+int s[maxb];
 
 int main()
 {
@@ -36,11 +36,43 @@ int main()
 		freopen(fn".out", "w", stdout);
 	#endif
 	scanf("%d%d", &a, &b);
-	for (int i = 0; i < b; i++)
-		s += "1";
-	for (int i = 1; i < int(s.size()); i += 3)
+	if (!(a - 1 <= b && b <= 2 * (a + 1)))
 	{
-		//cout << s.substr(0, i + 1) + "0" + s.substr(i + 1, s.size() - i - 1) << '\n';
-		s = s.substr(0, i + 1) + "0" + s.substr(i + 1, s.size() - i - 1);
+		puts("-1");
+		return 0;
+	}
+	if (a - 1 == b)
+	{
+		while (a > 0 && b > 0)
+		{
+			printf("01");
+			a--, b--;
+		}
+		printf("0");
+		return 0;
+	}
+	if (a == b)
+	{
+		while (a > 0 && b > 0)
+		{
+			printf("01");
+			a--, b--;
+		}
+		return 0;
+	}
+	int delta = (b - a - 1);
+	while (a > 0 && b > 0)
+	{
+		if (delta)
+			printf("1"), delta--, b--;
+		printf("10"), a--, b--;
+	}
+	if (a)
+		printf("0");
+	if (b)
+	{
+		printf("1");
+		if (delta)
+			printf("1");
 	}
 }
