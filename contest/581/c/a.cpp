@@ -29,9 +29,14 @@ double const pi = acos(-1);
 #define all(x) x.begin(), x.end()
 //#define fn ""
 
-int n, a[maxn], cnt[12];
+int n, a[maxn];
 int k;
 ll ans = 0ll;
+
+bool cmp(int a, int b)
+{
+	return (a % 10) > (b % 10);
+}
 
 int main()
 {
@@ -42,24 +47,17 @@ int main()
 	scanf("%d%d", &n, &k);
 	for (int i = 0; i < n; i++)
 		scanf("%d", a + i);
-	//sort(a, a + n);
+	sort(a, a + n, cmp);
 	for (int i = 0; i < n; i++)
+	{
+		int add = 10 - (a[i] % 10);
+		if (add <= k)
+		{
+			a[i] += add;
+			k -= add;
+		}
 		ans += a[i] / 10;
-	for (int i = 0; i < n; i++)
-	{
-		int cur = min((100 - a[i]) / 10, k / 10);
-		//printf("%d %d %d -> ", a[i], k, cnt);
-		a[i] += cnt * 10;
-		k -= cur * 10;
-		ans += cur;
-		cnt[a[i] % 10]++;
-		//printf("%d %d\n", a[i], k);
 	}
-	for (int i = 9; i; i--)
-	{
-		int cur = min(k / (10 - i), cnt[i]);
-		ans += cur;
-		k -= cur * (10 - i);
-	}
-	printf(I64, ans);
+	ans += k / 10;
+	printf(I64, min(ans, n * 10ll));
 }
