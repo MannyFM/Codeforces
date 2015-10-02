@@ -25,30 +25,9 @@ double const pi = acos(-1);
 #define S second
 //#define fn ""
 
-ll c[maxn][maxn];
-int a[maxn];
-//ll dp[maxn][maxn][(1 << maxn) + 12];
-map <pii>, ll> dp;
-int n, k, m;
-
-void rec(int v, int mask)
-{
-	if (dp.find(mp(v, mask)) != dp.end())
-		return dp[mp(v, mask)];
-	ll & ans = dp[mp(v, mask)];
-	//printf("%d %d %d " I64 "\n", v, cnt, mask, ans);
-	if (__builtin_popcount(mask) == m)
-		return;
-	ans = 0ll;
-	for (int to = 0; to < n; to++)
-	{
-		if (mask & (1 << to))
-			continue;
-		ans = max(ans, rec(to, cnt - 1, mask | (1 << to)) + c[v][to]);
-	}
-	ans += a[v];
-	return ans;
-}
+ll dp[maxn][(1 << maxn) + 2], ans;
+int n, m, k;
+int c[maxn][maxn], a[maxn];
 
 int main()
 {
@@ -56,10 +35,12 @@ int main()
 		freopen(fn".in", "r", stdin);
 		freopen(fn".out", "w", stdout);
 	#endif
-	//memset(dp, -1, sizeof (dp));
 	scanf("%d%d%d", &n, &m, &k);
 	for (int i = 0; i < n; i++)
+	{
 		scanf("%d", a + i);
+		dp[i][1 << i] = a[i];
+	}
 	for (int i = 0; i < k; i++)
 	{
 		int x, y, z;
@@ -67,11 +48,18 @@ int main()
 		x--, y--;
 		c[x][y] = z;
 	}
-	ll ans = 0ll;
-	for (int i = 0; i < n; i++)
-	{
-		//printf("%d:\n", i);
-		ans = max(ans, rec(i, m, (1 << i)));
-	}
+	for (int mask = 0; mask < (1 << n); mask++)
+		for (int y = 0; y < n; y++)
+		{
+			if (mask & (1 << y))
+				continue;
+			for (int x = 0; x < n; x++)
+				if (mask & (1 << x))
+					dp[y][mask | (1 << y)] = max(dp[y][mask | (1 << y)], dp[x][mask] + a[y] + c[x][y]);
+		}
+	for (int mask = 0; mask < (1 << n); mask++)
+		if (__builtin_popcount(mask) == m)
+			for (int last = 0; last < n; last++)
+				ans = max(ans, dp[last][mask]);
 	printf(I64, ans);
 }
