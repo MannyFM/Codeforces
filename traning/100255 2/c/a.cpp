@@ -9,7 +9,7 @@ typedef map <int, int> mii;
 typedef pair <int, int> pii;
 typedef pair <ll, ll> pll;
 
-int const maxn = int(2e5 + 12);
+int const maxn = int(1e6 + 12);
 int const maxb = int(2e6 + 12);
 int const inf = int(1e9 + 7);
 ll const linf = ll(1e18 + 12);
@@ -27,7 +27,7 @@ double const pi = acos(-1);
 #define next MyLittleNext
 //#define end MyLittleEnd
 #define all(x) x.begin(), x.end()
-#define fn "painter"
+//#define fn "painter"
 
 struct item
 {
@@ -97,8 +97,8 @@ item get(int v, int tl, int tr, int l, int r)
 		get(v + v + 1, tm + 1, tr, l, r));
 }
 
-int l, len;
-char c;
+int l[maxn], r[maxn];
+char c[maxn];
 
 int main()
 {
@@ -106,13 +106,24 @@ int main()
 		freopen(fn".in", "r", stdin);
 		freopen(fn".out", "w", stdout);
 	#endif
-	int N;
-	scanf("%d", &N);
-	for (int i = 0; i < N; i++)
+	int L = inf, R = -inf;
+	int M;
+	scanf("%d", &M);
+	for (int i = 0; i < M; i++)
 	{
-		scanf(" %c%d%d", &c, &l, &len);
-		upd(1, 1, N, l, l + len - 1, c == 'B');
-		item t = get(1, 1, N, 1, N);
-		printf("%d %d\n", t.cnt, t.sum);
+		int len = 0;
+		scanf(" %c%d%d", &c[i], &l[i], &len);
+		r[i] = l[i] + len;
+		L = min(L, l[i]);
+		R = max(R, r[i]);
+	}
+	int shift = L, N = R - L + 1;
+	printf("%d %d  %d\n", L, R, N);
+	for (int i = 0; i < M; i++)
+	{
+		printf("[%d %d] -> [%d %d] %d\n", l[i], r[i], l[i] - shift, r[i] - shift, c[i] == 'B');
+		upd(1, 0, N, l[i] - shift, r[i] - shift, c[i] == 'B');
+		item g = get(1, 0, N, 0, N);
+		printf("%d %d\n", g.cnt, g.sum);
 	}
 }
