@@ -29,7 +29,37 @@ double const pi = acos(-1);
 #define all(x) x.begin(), x.end()
 //#define fn ""
 
-int n, d[maxn], v[maxn], p[maxn];
+int n;
+ll d[maxn], v[maxn], p[maxn];
+bool us[maxn];
+
+void kill(int i, int how)
+{
+	printf(">>i:%d h:%d v:" I64 " d:" I64 " p:" I64 "\n", i, how, v[i], d[i], p[i]);
+	for (int j = 1; j <= n; j++)
+		printf(I64 " ", p[j]);
+	puts("\n");
+	
+	int base = how ? v[i] : d[i];
+	us[i] = 1;
+	for (int j = i + 1; j <= n; j++)
+	{
+		if (!us[j])
+		{
+			p[j] -= base;
+			base -= how;
+			if (p[j] < 0)
+			{
+				kill(j, 0);
+			}
+		}
+	}
+	printf("<<i:%d h:%d v:" I64 " d:" I64 " p:" I64 "\n", i, how, v[i], d[i], p[i]);
+	for (int j = 1; j <= n; j++)
+		printf(I64 " ", p[j]);
+	puts("\n");
+	
+}
 
 int main()
 {
@@ -40,28 +70,14 @@ int main()
 	scanf("%d", &n);
 	vector <int> pa;
 	for (int i = 1; i <= n; i++)
-		scanf("%d%d%d", v + i, d + i, p + i);
+		scanf(I64 I64 I64, v + i, d + i, p + i);
 	for (int i = 1; i <= n; i++)
 	{
-		if (p[i] < 0)
-		{
-			for (int j = i + 1; j <= n; j++)
-			{
-				p[j] -= d[i];
-				if (p[j] < 0)
-					p[j] = -1;
-			}
+		if (us[i])
 			continue;
-		}
-		int cnt = v[i];
-		for (int j = i + 1; j <= n && cnt; j++)
-			if (p[j] >= 0)
-			{
-				p[j] -= cnt--;
-				if (p[j] < 0)
-					p[j] = -1;
-			}
+		kill(i, 1);
 		pa.pb(i);
+		
 	}
 	printf("%d\n", pa.size());
 	for (int i : pa)

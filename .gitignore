@@ -2,3 +2,5 @@
 *.in
 *.out
 *.o
+input.txt
+output.txt
