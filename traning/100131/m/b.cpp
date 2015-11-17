@@ -29,10 +29,26 @@ double const pi = acos(-1);
 #define all(x) x.begin(), x.end()
 //#define fn
 
+char s[maxn];
+int n, p[maxn];
+
 int main()
 {
 	#ifdef fn
 		freopen(fn ".in", "r", stdin);
 		freopen(fn ".out", "w", stdout);
 	#endif
+	scanf("%s", s);
+	n = strlen(s);
+	for (int i = 1; i < n; i++)
+	{
+		int j = p[i - 1];
+		while (j > 0 && s[j] != s[i])
+			j = p[j - 1];
+		if (s[i] == s[j])
+			j++;
+		p[i] = j;
+	}
+	
+	printf("%d", n % (n - p[n - 1]) == 0 ? n - p[n - 1] : n);
 }
