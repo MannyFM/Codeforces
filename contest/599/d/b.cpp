@@ -1,4 +1,3 @@
-
 #include <bits/stdc++.h>
 
 using namespace std;
@@ -26,7 +25,21 @@ double const pi = acos(-1);
 #define S second
 //#define fn ""
 
-int a[maxn], n, pre[maxn], suf[maxn];
+ll a, b, x;
+
+ll f(ll a, ll b)
+{
+	ll x = 0;
+	if (a > b)
+		swap(a, b);
+	for (ll i = 1; i <= a; i++)
+	{
+		x += (a - i + 1) * (b - i + 1);
+		//printf("%d ", (a - i + 1) * (b - i + 1));
+	}
+	printf(" " I64 ":", (3ll * b - a + 1) * a * (a + 1) / 6);
+	return x;
+}
 
 int main()
 {
@@ -34,17 +47,6 @@ int main()
 		freopen(fn".in", "r", stdin);
 		freopen(fn".out", "w", stdout);
 	#endif
-	scanf("%d", &n);
-	for (int i = 1; i <= n; i++)
-		scanf("%d", a + i);
-	pre[0] = -inf;
-	suf[n + 1] = inf;
-	for (int i = 1; i <= n; i++)
-		pre[i] = max(pre[i - 1], a[i]);
-	for (int i = n; i > 0; i--)
-		suf[i] = min(suf[i + 1], a[i]);
-	int ans = 1;
-	for (int i = 1; i < n; i++)
-		ans += pre[i] <= suf[i + 1];
-	printf("%d", ans);
+	scanf(I64 I64, &a, &b);
+	printf(I64, f(a, b));
 }

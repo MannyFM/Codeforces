@@ -1,4 +1,3 @@
-
 #include <bits/stdc++.h>
 
 using namespace std;
@@ -26,7 +25,7 @@ double const pi = acos(-1);
 #define S second
 //#define fn ""
 
-int a[maxn], n, pre[maxn], suf[maxn];
+ll a, b, c;
 
 int main()
 {
@@ -34,17 +33,11 @@ int main()
 		freopen(fn".in", "r", stdin);
 		freopen(fn".out", "w", stdout);
 	#endif
-	scanf("%d", &n);
-	for (int i = 1; i <= n; i++)
-		scanf("%d", a + i);
-	pre[0] = -inf;
-	suf[n + 1] = inf;
-	for (int i = 1; i <= n; i++)
-		pre[i] = max(pre[i - 1], a[i]);
-	for (int i = n; i > 0; i--)
-		suf[i] = min(suf[i + 1], a[i]);
-	int ans = 1;
-	for (int i = 1; i < n; i++)
-		ans += pre[i] <= suf[i + 1];
-	printf("%d", ans);
+	scanf(I64 I64 I64, &a, &b, &c);
+	ll ans = inf;
+	ans = min(ans, a + c + b);
+	ans = min(ans, 2 * a + 2 * c);
+	ans = min(ans, 2 * b + 2 * c);
+	ans = min(ans, 2 * a + 2 * b);
+	printf(I64, ans);
 }

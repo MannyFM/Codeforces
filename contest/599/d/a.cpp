@@ -1,4 +1,3 @@
-
 #include <bits/stdc++.h>
 
 using namespace std;
@@ -26,7 +25,8 @@ double const pi = acos(-1);
 #define S second
 //#define fn ""
 
-int a[maxn], n, pre[maxn], suf[maxn];
+ll a, b, x;
+vector <pll> v;
 
 int main()
 {
@@ -34,17 +34,25 @@ int main()
 		freopen(fn".in", "r", stdin);
 		freopen(fn".out", "w", stdout);
 	#endif
-	scanf("%d", &n);
-	for (int i = 1; i <= n; i++)
-		scanf("%d", a + i);
-	pre[0] = -inf;
-	suf[n + 1] = inf;
-	for (int i = 1; i <= n; i++)
-		pre[i] = max(pre[i - 1], a[i]);
-	for (int i = n; i > 0; i--)
-		suf[i] = min(suf[i + 1], a[i]);
-	int ans = 1;
-	for (int i = 1; i < n; i++)
-		ans += pre[i] <= suf[i + 1];
-	printf("%d", ans);
+	scanf(I64, &x);
+	x *= 6;
+	for (a = 1; a * a * a <= x; a++)
+	{
+		if (x % a != 0 || x % (a + 1) != 0)
+			continue;
+		ll b = ((x / a) / (a + 1) + a - 1);
+		if (b / 3 < a)
+			break;
+		if (b % 3)
+			continue;
+		b /= 3;
+		//printf(I64 " " I64 "\n", a, b);
+		v.pb(mp(a, b));
+		if (a != b)
+			v.pb(mp(b, a));
+	}
+	sort(v.begin(), v.end());
+	printf("%d\n" ,v.size());
+	for (auto x : v)
+		printf(I64 " " I64 "\n", x.F, x.S);
 }

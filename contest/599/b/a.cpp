@@ -1,4 +1,3 @@
-
 #include <bits/stdc++.h>
 
 using namespace std;
@@ -26,7 +25,9 @@ double const pi = acos(-1);
 #define S second
 //#define fn ""
 
-int a[maxn], n, pre[maxn], suf[maxn];
+int n, m;
+int pos[maxn], a[maxn], f[maxn], b[maxn];
+int cnt[maxn];
 
 int main()
 {
@@ -34,17 +35,29 @@ int main()
 		freopen(fn".in", "r", stdin);
 		freopen(fn".out", "w", stdout);
 	#endif
-	scanf("%d", &n);
+	scanf("%d%d", &n, &m);
 	for (int i = 1; i <= n; i++)
-		scanf("%d", a + i);
-	pre[0] = -inf;
-	suf[n + 1] = inf;
-	for (int i = 1; i <= n; i++)
-		pre[i] = max(pre[i - 1], a[i]);
-	for (int i = n; i > 0; i--)
-		suf[i] = min(suf[i + 1], a[i]);
-	int ans = 1;
-	for (int i = 1; i < n; i++)
-		ans += pre[i] <= suf[i + 1];
-	printf("%d", ans);
+		scanf("%d", f + i), cnt[f[i]]++, pos[f[i]] = i;
+	for (int i = 1; i <= m; i++)
+		scanf("%d", b + i);
+	bool f1 = 0;
+	for (int i = 1; i <= m; i++)
+	{
+		if (!cnt[b[i]])
+		{
+			puts("Impossible");
+			return 0;
+		}
+		if (cnt[b[i]] > 1)
+			f1 = 1;
+		a[i] = pos[b[i]];
+	}
+	if (f1)
+	{
+		puts("Ambiguity");
+		return 0;
+	}
+	puts("Possible");
+	for (int i = 1; i <= m; i++)
+		printf("%d ", a[i]);
 }
