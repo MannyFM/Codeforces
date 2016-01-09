@@ -65,14 +65,10 @@ void update(int v, int tl, int tr, int l, int r, int x)
 ll get(int v, int tl, int tr, int l, int r)
 {
 	if (l > r)
-	{
 		return inf;
-	}	
 	push(v, tl, tr);
 	if (tl == l && tr == r)
-	{
 		return t[v].x;
-	}
 	int tm = (tl + tr) >> 1;
 	return min(get(v + v, tl, tm, l, min(tm, r)), 
 		get(v + v + 1, tm + 1, tr, max(tm + 1, l), r));
