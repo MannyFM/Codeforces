@@ -41,14 +41,7 @@ bool umin(T & a, T b)
 	return a > b ? (a = b, 1) : 0;
 }
 
-ll n, a, b, c;
-
-ll cnt(ll x, ll y)
-{
-	if (x < 0)
-		return 0ll;
-	return x / y;
-}
+int a[maxn], n;
 
 int main()
 {
@@ -56,13 +49,37 @@ int main()
 		freopen(fn ".in", "r", stdin);
 		freopen(fn ".out", "w", stdout);
 	#endif
-	scanf(I64 I64 I64 I64, &n, &a, &b, &c);
-	ll ans1 = cnt(n, a);
-	ll ans2 = 0ll;
-	if (b <= n)
+	char c;
+	while (scanf("%c", &c) == 1 && '0' <= c && c <= '9')
 	{
-		ans2 = cnt(n - b, b - c) + 1;
-		ans2 += (n - ans2 * b + ans2 * c) / a;
+		a[++n] = c - '0';
+		if (a[n] % 8 == 0)
+		{
+			printf("YES\n%d", a[n]);
+			return 0;
+		}
 	}
-	printf(I64, max(ans1, ans2));
+	for (int i = 1; i <= n; i++)
+		for (int j = i + 1; j <= n; j++)
+		{
+			int x = 10 * a[i] + a[j];
+			if (x % 8 == 0)
+			{
+				printf("YES\n%d", x);
+				return 0;
+			}
+		}
+	for (int i = 1; i <= n; i++)
+		for (int j = i + 1; j <= n; j++)
+			for (int k = j + 1; k <= n; k++)
+			{
+				int x = (10 * a[i] + a[j]) * 10 + a[k];
+				if (x % 8 == 0)
+				{
+					printf("YES\n%d", x);
+					return 0;
+				}
+			}
+	puts("NO");
 }
+

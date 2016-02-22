@@ -3,11 +3,12 @@
 
 using namespace std;
 
-typedef long long  ll;
+typedef long long ll;
 typedef unsigned long long ull;
 typedef map <int, int> mii;
 typedef pair <int, int> pii;
 typedef pair <ll, ll> pll;
+typedef vector <int> vi;
 
 int const maxn = int(1e5 + 12);
 int const maxb = int(2e6 + 12);
@@ -41,13 +42,40 @@ bool umin(T & a, T b)
 	return a > b ? (a = b, 1) : 0;
 }
 
-ll n, a, b, c;
+char s[20];
 
-ll cnt(ll x, ll y)
+bool check(int a, int b)
 {
-	if (x < 0)
-		return 0ll;
-	return x / y;
+//	puts("");
+	for (int j = 1; j <= b; j++)
+	{
+		int cur = j;
+		bool ok = 1;
+		for (int i = 1; i <= a; i++)
+		{
+			if (s[cur] == 'O')
+				ok = 0;
+//			printf("%c", s[cur]);
+			cur += b;
+		}
+//		puts("");
+		if (ok)
+			return 1;
+	}
+	return 0;
+}
+
+void solve()
+{
+	vi ans;
+	scanf("%s", s + 1);
+	for (int a = 1; a <= 12; a++)
+		if (12 % a == 0 && check(a, 12 / a))
+			ans.pb(a);
+	printf("%d ", (int)ans.size());
+	for (int x : ans)
+		printf("%dx%d ", x, 12 / x);
+	puts("");
 }
 
 int main()
@@ -56,13 +84,9 @@ int main()
 		freopen(fn ".in", "r", stdin);
 		freopen(fn ".out", "w", stdout);
 	#endif
-	scanf(I64 I64 I64 I64, &n, &a, &b, &c);
-	ll ans1 = cnt(n, a);
-	ll ans2 = 0ll;
-	if (b <= n)
-	{
-		ans2 = cnt(n - b, b - c) + 1;
-		ans2 += (n - ans2 * b + ans2 * c) / a;
-	}
-	printf(I64, max(ans1, ans2));
+	int t;
+	scanf("%d", &t);
+	while (t--)
+		solve();
 }
+

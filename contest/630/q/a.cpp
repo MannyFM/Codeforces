@@ -14,7 +14,6 @@ int const maxb = int(2e6 + 12);
 int const inf = int(1e9 + 7);
 ll const linf = ll(1e18 + 12);
 double const eps = 1e-7;
-double const pi = acos(-1);
 #ifdef _WIN32
 	#define I64 "%I64d"
 #else
@@ -41,14 +40,22 @@ bool umin(T & a, T b)
 	return a > b ? (a = b, 1) : 0;
 }
 
-ll n, a, b, c;
+typedef long double ld;
 
-ll cnt(ll x, ll y)
+ld V(ld S, ld h)
 {
-	if (x < 0)
-		return 0ll;
-	return x / y;
+	return S * h / 3;
 }
+
+ld v(int a, int b)
+{
+	ld d = sqrt(2) * a;
+	ld h = sqrt(b * b - d * d / 4);
+	return V(a * a, h);
+}
+
+ld const pi = 3.141592653589793238462643383279;
+int a, b, c;
 
 int main()
 {
@@ -56,13 +63,15 @@ int main()
 		freopen(fn ".in", "r", stdin);
 		freopen(fn ".out", "w", stdout);
 	#endif
-	scanf(I64 I64 I64 I64, &n, &a, &b, &c);
-	ll ans1 = cnt(n, a);
-	ll ans2 = 0ll;
-	if (b <= n)
-	{
-		ans2 = cnt(n - b, b - c) + 1;
-		ans2 += (n - ans2 * b + ans2 * c) / a;
-	}
-	printf(I64, max(ans1, ans2));
+	scanf("%d%d%d", &a, &b, &c);
+	ld v1 = sqrt(2) * a * a * a / 12;
+	ld v2 = V(b * b, b * cos(pi / 4));
+
+	ld R = c * sqrt(2.0 / (5 - sqrt(5)));
+	ld H = sqrt(c * c - R * R);
+	ld S = 5.0 / 4 * c * c * (1.0 / tan(pi / 5));
+	ld v3 = V(S, H);
+	//printf("%.12f %.12f %.12f\n", double(v1), double(v2), double(v3));
+	printf("%.12f", double(v1 + v2 + v3));
 }
+

@@ -41,14 +41,20 @@ bool umin(T & a, T b)
 	return a > b ? (a = b, 1) : 0;
 }
 
-ll n, a, b, c;
-
-ll cnt(ll x, ll y)
+ll bp(ll a, ll b)
 {
-	if (x < 0)
-		return 0ll;
-	return x / y;
+	ll ans = 1ll;
+	while (b)
+	{
+		if (b & 1)
+			ans = (ans * a) % 100;
+		a = (a * a) % 100;
+		b >>= 1;
+	}
+	return ans;
 }
+
+ll a;
 
 int main()
 {
@@ -56,13 +62,7 @@ int main()
 		freopen(fn ".in", "r", stdin);
 		freopen(fn ".out", "w", stdout);
 	#endif
-	scanf(I64 I64 I64 I64, &n, &a, &b, &c);
-	ll ans1 = cnt(n, a);
-	ll ans2 = 0ll;
-	if (b <= n)
-	{
-		ans2 = cnt(n - b, b - c) + 1;
-		ans2 += (n - ans2 * b + ans2 * c) / a;
-	}
-	printf(I64, max(ans1, ans2));
+	scanf(I64, &a);
+	printf(I64, bp(5, a));
 }
+

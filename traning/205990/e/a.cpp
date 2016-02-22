@@ -41,28 +41,55 @@ bool umin(T & a, T b)
 	return a > b ? (a = b, 1) : 0;
 }
 
-ll n, a, b, c;
+int n, k, a[maxn];
+map <int, int> cnt;
+set <int> se;
 
-ll cnt(ll x, ll y)
+void solve()
 {
-	if (x < 0)
-		return 0ll;
-	return x / y;
+//	printf("%d:", (int)se.size());
+//	for (int x : se)
+//		printf("%d ", x);
+//	puts("");
+	if (se.empty())
+		puts("Nothing");
+	else
+	{
+		auto it = se.end();
+		it--;
+		printf("%d\n", *it);
+	}
 }
 
+void check(int x)
+{
+	if (cnt[x] == 1)
+		se.insert(x);
+	else
+		se.erase(x);
+}
 int main()
 {
 	#ifdef fn
 		freopen(fn ".in", "r", stdin);
 		freopen(fn ".out", "w", stdout);
 	#endif
-	scanf(I64 I64 I64 I64, &n, &a, &b, &c);
-	ll ans1 = cnt(n, a);
-	ll ans2 = 0ll;
-	if (b <= n)
+	scanf("%d%d", &n, &k);
+	for (int i = 1; i <= n; i++)
+		scanf("%d", a + i);
+	for (int i = 1; i <= k; i++)
 	{
-		ans2 = cnt(n - b, b - c) + 1;
-		ans2 += (n - ans2 * b + ans2 * c) / a;
+		cnt[a[i]]++;
+		check(a[i]);
 	}
-	printf(I64, max(ans1, ans2));
+	solve();
+	for (int i = k + 1; i <= n; i++)
+	{
+		cnt[a[i - k]]--;
+		cnt[a[i]]++;
+		check(a[i - k]);
+		check(a[i]);
+		solve();
+	}
 }
+

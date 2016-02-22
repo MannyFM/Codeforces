@@ -9,7 +9,7 @@ typedef map <int, int> mii;
 typedef pair <int, int> pii;
 typedef pair <ll, ll> pll;
 
-int const maxn = int(1e5 + 12);
+int const maxn = int(5e5 + 12);
 int const maxb = int(2e6 + 12);
 int const inf = int(1e9 + 7);
 ll const linf = ll(1e18 + 12);
@@ -41,14 +41,10 @@ bool umin(T & a, T b)
 	return a > b ? (a = b, 1) : 0;
 }
 
-ll n, a, b, c;
-
-ll cnt(ll x, ll y)
-{
-	if (x < 0)
-		return 0ll;
-	return x / y;
-}
+int n, a[maxn];
+ll l[maxn], r[maxn];
+map <ll, ll> cnt;
+ll ans;
 
 int main()
 {
@@ -56,13 +52,24 @@ int main()
 		freopen(fn ".in", "r", stdin);
 		freopen(fn ".out", "w", stdout);
 	#endif
-	scanf(I64 I64 I64 I64, &n, &a, &b, &c);
-	ll ans1 = cnt(n, a);
-	ll ans2 = 0ll;
-	if (b <= n)
+	scanf("%d", &n);
+	for (int i = 1; i <= n; i++)
+		scanf("%d", a + i);
+	for (int i = 1; i <= n; i++)
+		l[i] = l[i - 1] + a[i];
+	for (int i = n; i > 0; i--)
+		r[i] = r[i + 1] + a[i];
+	for (int i = 1; i < n; i++)
 	{
-		ans2 = cnt(n - b, b - c) + 1;
-		ans2 += (n - ans2 * b + ans2 * c) / a;
+		if ((l[i] & 1) || (l[i] != r[i + 1] * 2))
+		{
+			cnt[l[i]]++;
+			continue;
+		}
+//		printf("(%d " I64 ")", i, cnt[l[i] / 2]);
+		ans += cnt[l[i] / 2];
+		cnt[l[i]]++;
 	}
-	printf(I64, max(ans1, ans2));
+	printf(I64, ans);
 }
+

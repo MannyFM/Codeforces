@@ -41,13 +41,27 @@ bool umin(T & a, T b)
 	return a > b ? (a = b, 1) : 0;
 }
 
-ll n, a, b, c;
+int n;
+vector <int> g[maxn];
+map <string, int> id;
 
-ll cnt(ll x, ll y)
+string norm(const string & s)
 {
-	if (x < 0)
-		return 0ll;
-	return x / y;
+	string ans = "";
+	for (char c : s)
+		if ('A' <= c && c <= 'Z')
+			ans += c - 'A' + 'a';
+		else
+			ans += c;
+	return ans;
+}
+
+int dfs(int v)
+{
+	int ans = 0;
+	for (int to : g[v])
+		umax(ans, dfs(to));
+	return ans + 1;
 }
 
 int main()
@@ -56,13 +70,20 @@ int main()
 		freopen(fn ".in", "r", stdin);
 		freopen(fn ".out", "w", stdout);
 	#endif
-	scanf(I64 I64 I64 I64, &n, &a, &b, &c);
-	ll ans1 = cnt(n, a);
-	ll ans2 = 0ll;
-	if (b <= n)
+	scanf("%d", &n);
+	for (int i = 1; i <= n; i++)
 	{
-		ans2 = cnt(n - b, b - c) + 1;
-		ans2 += (n - ans2 * b + ans2 * c) / a;
+		string s, t;
+		cin >> s >> t;
+		cin >> t;
+		s = norm(s);
+		t = norm(t);
+		if (!id.count(s))
+			id[s] = id.size();
+		if (!id.count(t))
+			id[t] = id.size();
+		g[id[t]].pb(id[s]);
 	}
-	printf(I64, max(ans1, ans2));
+	printf("%d", dfs(id["polycarp"]));
 }
+

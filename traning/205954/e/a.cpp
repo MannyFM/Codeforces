@@ -27,7 +27,7 @@ double const pi = acos(-1);
 #define next MyLittleNext
 //#define end MyLittleEnd
 #define all(x) x.begin(), x.end()
-//#define fn ""
+#define fn "f"
 
 template <typename T>
 bool umax(T & a, T b)
@@ -41,14 +41,9 @@ bool umin(T & a, T b)
 	return a > b ? (a = b, 1) : 0;
 }
 
-ll n, a, b, c;
-
-ll cnt(ll x, ll y)
-{
-	if (x < 0)
-		return 0ll;
-	return x / y;
-}
+int n, s;
+map <ll, ll> a, b;
+vector <pll> A, B;
 
 int main()
 {
@@ -56,13 +51,33 @@ int main()
 		freopen(fn ".in", "r", stdin);
 		freopen(fn ".out", "w", stdout);
 	#endif
-	scanf(I64 I64 I64 I64, &n, &a, &b, &c);
-	ll ans1 = cnt(n, a);
-	ll ans2 = 0ll;
-	if (b <= n)
+	scanf("%d%d", &n, &s);
+	for (int i = 1; i <= n; i++)
 	{
-		ans2 = cnt(n - b, b - c) + 1;
-		ans2 += (n - ans2 * b + ans2 * c) / a;
+		char c;
+		int x, y;
+		scanf(" %c%d%d", &c, &x, &y);
+		if (c == 'S')
+			a[x] += y;
+		else
+			b[-x] += y;
 	}
-	printf(I64, max(ans1, ans2));
+	int cnt = min(s, (int)a.size());
+	for (int i = 1; i <= cnt; i++)
+	{
+		auto it = a.begin();
+		A.pb(*it);
+		a.erase(it);
+	}
+	reverse(all(A));
+	for (auto it : A)
+		printf("S " I64 " " I64 "\n", it.F, it.S);
+	cnt = min(s, (int)b.size());
+	for (int i = 1; i <= cnt; i++)
+	{
+		auto it = b.begin();
+		printf("B " I64 " " I64 "\n", - it -> F, it -> S);
+		b.erase(it);
+	}
 }
+

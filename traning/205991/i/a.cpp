@@ -41,13 +41,29 @@ bool umin(T & a, T b)
 	return a > b ? (a = b, 1) : 0;
 }
 
-ll n, a, b, c;
-
-ll cnt(ll x, ll y)
+ll add(ll & x, ll y)
 {
-	if (x < 0)
-		return 0ll;
-	return x / y;
+	x += y;
+	while (x >= inf)
+		x -= inf;
+	return x;
+}
+
+int n, k;
+ll dp[2050][2050];
+vector <int> v[2050];
+
+ll rec(int pos, int last)
+{
+	if (pos == 1)
+		return 1ll;
+	ll & ans = dp[pos][last];
+	if (ans != -1)
+		return ans;
+	ans = 0ll;
+	for (int x : v[last])
+		add(ans, rec(pos - 1, x));
+	return ans;
 }
 
 int main()
@@ -56,13 +72,22 @@ int main()
 		freopen(fn ".in", "r", stdin);
 		freopen(fn ".out", "w", stdout);
 	#endif
-	scanf(I64 I64 I64 I64, &n, &a, &b, &c);
-	ll ans1 = cnt(n, a);
-	ll ans2 = 0ll;
-	if (b <= n)
+	scanf("%d%d", &n, &k);
+	for (int i = 1; i <= n; i++)
 	{
-		ans2 = cnt(n - b, b - c) + 1;
-		ans2 += (n - ans2 * b + ans2 * c) / a;
+		for (int j = 1; j * j <= i; j++)
+		{
+			if (i % j)
+				continue;
+			v[i].pb(j);
+			if (j * j != i)
+				v[i].pb(i / j);
+		}
 	}
-	printf(I64, max(ans1, ans2));
+	memset(dp, -1, sizeof(dp));
+	ll ans = 0ll;
+	for (int x = 1; x <= n; x++)
+		add(ans, rec(k, x));
+	printf(I64, ans);
 }
+

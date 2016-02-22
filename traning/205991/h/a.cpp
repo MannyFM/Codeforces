@@ -41,13 +41,25 @@ bool umin(T & a, T b)
 	return a > b ? (a = b, 1) : 0;
 }
 
-ll n, a, b, c;
+ll dp[2][110][110];
+int n, k, d;
 
-ll cnt(ll x, ll y)
+ll rec(int lvl, int n, int ok)
 {
-	if (x < 0)
-		return 0ll;
-	return x / y;
+	if (!n)
+		return ok;
+	ll & ans = dp[ok][lvl][n];
+	if (ans != -1)
+		return ans;
+	ans = 0ll;
+	int mx = min(n, k);
+	for (int i = 1; i <= mx; i++)
+	{
+		ans += rec(lvl + 1, n - i, ok | (i >= d));
+		while (ans >= inf)
+			ans -= inf;
+	}
+	return ans;
 }
 
 int main()
@@ -56,13 +68,9 @@ int main()
 		freopen(fn ".in", "r", stdin);
 		freopen(fn ".out", "w", stdout);
 	#endif
-	scanf(I64 I64 I64 I64, &n, &a, &b, &c);
-	ll ans1 = cnt(n, a);
-	ll ans2 = 0ll;
-	if (b <= n)
-	{
-		ans2 = cnt(n - b, b - c) + 1;
-		ans2 += (n - ans2 * b + ans2 * c) / a;
-	}
-	printf(I64, max(ans1, ans2));
+	scanf("%d%d%d", &n, &k, &d);
+	memset(dp, -1, sizeof(dp));
+	ll ans = rec(1, n, 0);
+	printf(I64, ans);
 }
+

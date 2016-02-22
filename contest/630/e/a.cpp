@@ -25,6 +25,10 @@ double const pi = acos(-1);
 #define F first
 #define S second
 #define next MyLittleNext
+#define x1 MyLittleX1
+#define x2 MyLittleX2
+#define y1 MyLittleY1
+#define y2 MyLittleY2
 //#define end MyLittleEnd
 #define all(x) x.begin(), x.end()
 //#define fn ""
@@ -41,14 +45,7 @@ bool umin(T & a, T b)
 	return a > b ? (a = b, 1) : 0;
 }
 
-ll n, a, b, c;
-
-ll cnt(ll x, ll y)
-{
-	if (x < 0)
-		return 0ll;
-	return x / y;
-}
+int x1, x2, y1, y2;
 
 int main()
 {
@@ -56,13 +53,11 @@ int main()
 		freopen(fn ".in", "r", stdin);
 		freopen(fn ".out", "w", stdout);
 	#endif
-	scanf(I64 I64 I64 I64, &n, &a, &b, &c);
-	ll ans1 = cnt(n, a);
-	ll ans2 = 0ll;
-	if (b <= n)
-	{
-		ans2 = cnt(n - b, b - c) + 1;
-		ans2 += (n - ans2 * b + ans2 * c) / a;
-	}
-	printf(I64, max(ans1, ans2));
+	scanf("%d%d%d%d", &x1, &y1, &x2, &y2);
+	ll a = ((x2 - x1 + 1) / 2ll) * ((y2 - y1 + 1) / 2);
+	ll b = ((x2 - x1 + 2) / 2ll) * ((y2 - y1 + 2) / 2);
+//	printf("%d %d\n%d %d\n", (x2 - x1 + 1) / 2, (y2 - y1 + 1) / 2, (x2 - x1 + 2) / 2, (y2 - y1 + 1) / 2);
+//	printf(I64 " " I64 "\n", a, b);
+	printf(I64, a + b);
 }
+

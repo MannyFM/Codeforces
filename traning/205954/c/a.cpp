@@ -41,14 +41,8 @@ bool umin(T & a, T b)
 	return a > b ? (a = b, 1) : 0;
 }
 
-ll n, a, b, c;
-
-ll cnt(ll x, ll y)
-{
-	if (x < 0)
-		return 0ll;
-	return x / y;
-}
+vector <pii> v;
+int n, m, a[maxn], b[maxn];
 
 int main()
 {
@@ -56,13 +50,39 @@ int main()
 		freopen(fn ".in", "r", stdin);
 		freopen(fn ".out", "w", stdout);
 	#endif
-	scanf(I64 I64 I64 I64, &n, &a, &b, &c);
-	ll ans1 = cnt(n, a);
-	ll ans2 = 0ll;
-	if (b <= n)
+	scanf("%d", &n);
+	for (int i = 0; i < n; i++)
 	{
-		ans2 = cnt(n - b, b - c) + 1;
-		ans2 += (n - ans2 * b + ans2 * c) / a;
+		scanf("%d", a + i);
+		v.pb({a[i], 0});
 	}
-	printf(I64, max(ans1, ans2));
+	scanf("%d", &m);
+	for (int i = 0; i < m; i++)
+	{
+		scanf("%d", b + i);
+		v.pb({b[i], 1});
+	}
+	int f = 3 * n, s = 3 * m;
+	int F = f, S = s;
+	sort(all(v));
+	for (int i = 0; i < int(v.size()); )
+	{
+		int j = i;
+		while (j < int(v.size()) && v[i].F == v[j].F)
+		{
+			if (v[j].S)
+				s--;
+			else
+				f--;	
+			j++;
+		}
+		if (f - s > F - S || (f - s == F - s && f > F))
+		{
+			F = f;
+			S = s;
+		}
+		i = j;
+	}
+	printf("%d:%d", F, S);
 }
+

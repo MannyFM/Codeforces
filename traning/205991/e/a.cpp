@@ -9,7 +9,7 @@ typedef map <int, int> mii;
 typedef pair <int, int> pii;
 typedef pair <ll, ll> pll;
 
-int const maxn = int(1e5 + 12);
+int const maxn = int(1e6 + 12);
 int const maxb = int(2e6 + 12);
 int const inf = int(1e9 + 7);
 ll const linf = ll(1e18 + 12);
@@ -41,13 +41,37 @@ bool umin(T & a, T b)
 	return a > b ? (a = b, 1) : 0;
 }
 
-ll n, a, b, c;
+int dp[maxn], n;
+int pr[maxn];
+set <int> se;
 
-ll cnt(ll x, ll y)
+void gen(int cur)
 {
-	if (x < 0)
-		return 0ll;
-	return x / y;
+	if (cur > n)
+		return;
+	se.insert(cur);
+	dp[cur] = 1;
+	pr[cur] = cur;
+	gen(cur * 10);
+	gen(cur * 10 + 1);
+}
+
+int rec(int x)
+{
+	if (x == 1)
+		return 1;
+	int & ans = dp[x];
+	if (ans != -1)
+		return ans;
+	ans = inf;
+	for (int y : se)
+	{
+		if (y > x)
+			break;
+		if (umin(ans, rec(x - y) + 1))
+			pr[x] = y;
+	}
+	return ans;
 }
 
 int main()
@@ -56,13 +80,18 @@ int main()
 		freopen(fn ".in", "r", stdin);
 		freopen(fn ".out", "w", stdout);
 	#endif
-	scanf(I64 I64 I64 I64, &n, &a, &b, &c);
-	ll ans1 = cnt(n, a);
-	ll ans2 = 0ll;
-	if (b <= n)
+	scanf("%d", &n);
+	memset(dp, -1, sizeof(dp));
+	gen(1);
+	rec(n);
+	vector <int> ans;
+	while (n)
 	{
-		ans2 = cnt(n - b, b - c) + 1;
-		ans2 += (n - ans2 * b + ans2 * c) / a;
+		ans.pb(pr[n]);
+		n -= pr[n];
 	}
-	printf(I64, max(ans1, ans2));
+	printf("%d\n", (int)ans.size());
+	for (int x : ans)
+		printf("%d ", x);
 }
+

@@ -27,7 +27,7 @@ double const pi = acos(-1);
 #define next MyLittleNext
 //#define end MyLittleEnd
 #define all(x) x.begin(), x.end()
-//#define fn ""
+#define fn "f"
 
 template <typename T>
 bool umax(T & a, T b)
@@ -41,28 +41,16 @@ bool umin(T & a, T b)
 	return a > b ? (a = b, 1) : 0;
 }
 
-ll n, a, b, c;
-
-ll cnt(ll x, ll y)
-{
-	if (x < 0)
-		return 0ll;
-	return x / y;
-}
-
 int main()
 {
 	#ifdef fn
-		freopen(fn ".in", "r", stdin);
-		freopen(fn ".out", "w", stdout);
+		//freopen(fn ".in", "r", stdin);
+		freopen(fn ".in", "w", stdout);
 	#endif
-	scanf(I64 I64 I64 I64, &n, &a, &b, &c);
-	ll ans1 = cnt(n, a);
-	ll ans2 = 0ll;
-	if (b <= n)
-	{
-		ans2 = cnt(n - b, b - c) + 1;
-		ans2 += (n - ans2 * b + ans2 * c) / a;
-	}
-	printf(I64, max(ans1, ans2));
+	int n = 1000000, x = 9840769;
+	printf("%d\n", n);
+	for (int i = 1; i <= n; i++)
+		printf("%d ", x);
+	printf("\n0");
 }
+

@@ -41,14 +41,37 @@ bool umin(T & a, T b)
 	return a > b ? (a = b, 1) : 0;
 }
 
-ll n, a, b, c;
+int T[4 * maxn];
 
-ll cnt(ll x, ll y)
+void upd(int v, int tl, int tr, int pos, int x)
 {
-	if (x < 0)
-		return 0ll;
-	return x / y;
+	if (tl == tr)
+	{
+		T[v] += x;
+		return;
+	}
+	int tm = (tl + tr) >> 1;
+	if (pos <= tm)
+		upd(v + v, tl, tm, pos, x);
+	else
+		upd(v + v + 1, tm + 1, tr, pos, x);
+	T[v] = T[v + v] + T[v + v + 1];
 }
+
+int get(int v, int tl, int tr, int l, int r)
+{
+	if (l > r || tr < l || r < tl)
+		return 0;
+	if (l <= tl && tr <= r)
+		return T[v];
+	int tm = (tl + tr) >> 1;
+	return get(v + v, tl, tm, l, r)
+		+ get(v + v + 1, tm + 1, tr, l, r);
+}
+
+int n, a[maxn];
+map <int, int> cnt;
+int l[maxn], r[maxn];
 
 int main()
 {
@@ -56,13 +79,23 @@ int main()
 		freopen(fn ".in", "r", stdin);
 		freopen(fn ".out", "w", stdout);
 	#endif
-	scanf(I64 I64 I64 I64, &n, &a, &b, &c);
-	ll ans1 = cnt(n, a);
-	ll ans2 = 0ll;
-	if (b <= n)
+	scanf("%d", &n);
+	for (int i = 1; i <= n; i++)
+		scanf("%d", a + i);
+	for (int i = 1; i <= n; i++)
+		l[i] = ++cnt[a[i]];
+	cnt.clear();
+	for (int i = n; i > 0; i--)
 	{
-		ans2 = cnt(n - b, b - c) + 1;
-		ans2 += (n - ans2 * b + ans2 * c) / a;
+		r[i] = ++cnt[a[i]];
+		upd(1, 1, n, r[i], 1);
 	}
-	printf(I64, max(ans1, ans2));
+	ll ans = 0ll;
+	for (int i = 1; i <= n; i++)
+	{
+		upd(1, 1, n, r[i], -1);
+		ans += get(1, 1, n, 1, l[i] - 1);
+	}
+	printf(I64, ans);
 }
+

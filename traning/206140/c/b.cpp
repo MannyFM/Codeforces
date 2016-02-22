@@ -10,7 +10,7 @@ typedef pair <int, int> pii;
 typedef pair <ll, ll> pll;
 
 int const maxn = int(1e5 + 12);
-int const maxb = int(2e6 + 12);
+int const maxlen = 5 * 1000 * 1000 + 13;
 int const inf = int(1e9 + 7);
 ll const linf = ll(1e18 + 12);
 double const eps = 1e-7;
@@ -27,7 +27,7 @@ double const pi = acos(-1);
 #define next MyLittleNext
 //#define end MyLittleEnd
 #define all(x) x.begin(), x.end()
-//#define fn ""
+#define fn "f"
 
 template <typename T>
 bool umax(T & a, T b)
@@ -41,13 +41,55 @@ bool umin(T & a, T b)
 	return a > b ? (a = b, 1) : 0;
 }
 
-ll n, a, b, c;
+int n;
+int lp[maxlen];
+vector <int> pr;
 
-ll cnt(ll x, ll y)
+ll bp(ll a, ll b)
 {
-	if (x < 0)
-		return 0ll;
-	return x / y;
+	ll ans = 1ll;
+	while (b)
+	{
+		if (b & 1)
+			ans *= a;
+		a *= a;
+		b >>= 1;
+	}
+	return ans;
+}
+
+mii a[maxlen];
+ll b[maxlen];
+
+ll solve(int x, int y)
+{
+	return b[x] - b[y];
+}
+
+void pre()
+{
+	int N = 5 * 1000 * 1000;
+	lp[0] = lp[1] = 1;
+	for (int i = 2; i <= N; i++)
+	{
+		if (!lp[i])
+		{
+			lp[i] = i;
+			pr.pb(i);
+		}
+		for (int j = 0; j < (int)pr.size() && pr[j] <= lp[i] && pr[j] * 1ll * i <= N; j++)
+			lp[i * pr[j]] = pr[j];
+	}
+	for (int i = 1; i <= N; i++)
+	{
+		int x = i;
+		b[i] = b[i - 1];
+		while (x > 1)
+		{
+			b[i]++;
+			x /= lp[x];
+		}
+	}
 }
 
 int main()
@@ -56,13 +98,13 @@ int main()
 		freopen(fn ".in", "r", stdin);
 		freopen(fn ".out", "w", stdout);
 	#endif
-	scanf(I64 I64 I64 I64, &n, &a, &b, &c);
-	ll ans1 = cnt(n, a);
-	ll ans2 = 0ll;
-	if (b <= n)
+	pre();
+	int t, x, y;
+	scanf("%d", &t);
+	while (t--)
 	{
-		ans2 = cnt(n - b, b - c) + 1;
-		ans2 += (n - ans2 * b + ans2 * c) / a;
+		scanf("%d%d", &x, &y);
+		printf(I64 "\n", solve(x, y));
 	}
-	printf(I64, max(ans1, ans2));
 }
+

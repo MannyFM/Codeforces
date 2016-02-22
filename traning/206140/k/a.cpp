@@ -41,14 +41,8 @@ bool umin(T & a, T b)
 	return a > b ? (a = b, 1) : 0;
 }
 
-ll n, a, b, c;
-
-ll cnt(ll x, ll y)
-{
-	if (x < 0)
-		return 0ll;
-	return x / y;
-}
+string s;
+set	<int> ab, ba;
 
 int main()
 {
@@ -56,13 +50,32 @@ int main()
 		freopen(fn ".in", "r", stdin);
 		freopen(fn ".out", "w", stdout);
 	#endif
-	scanf(I64 I64 I64 I64, &n, &a, &b, &c);
-	ll ans1 = cnt(n, a);
-	ll ans2 = 0ll;
-	if (b <= n)
+	cin >> s;
+	for (int i = 0; i + 1 < (int)s.size(); i++)
 	{
-		ans2 = cnt(n - b, b - c) + 1;
-		ans2 += (n - ans2 * b + ans2 * c) / a;
+		if (s[i] == 'A' && s[i + 1] == 'B')
+			ab.insert(i);
+		if (s[i] == 'B' && s[i + 1] == 'A')
+			ba.insert(i);
 	}
-	printf(I64, max(ans1, ans2));
+	for (int i : ab)
+	{
+		auto it  = ba.upper_bound(i + 1);
+		if (it != ba.end())
+		{
+			puts("YES");
+			return 0;
+		}
+	}
+	for (int i : ba)
+	{
+		auto it  = ab.upper_bound(i + 1);
+		if (it != ab.end())
+		{
+			puts("YES");
+			return 0;
+		}
+	}
+	puts("NO");
 }
+

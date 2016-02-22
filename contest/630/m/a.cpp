@@ -41,13 +41,20 @@ bool umin(T & a, T b)
 	return a > b ? (a = b, 1) : 0;
 }
 
-ll n, a, b, c;
+ll x;
+ll y = inf;
+int ans;
 
-ll cnt(ll x, ll y)
+int f(int x)
 {
-	if (x < 0)
-		return 0ll;
-	return x / y;
+	int y = x;
+	if (x > 0)
+		y -= 360;
+	else
+		y += 360;
+	if (abs(y) < abs(x))
+		return y;
+	return x;
 }
 
 int main()
@@ -56,13 +63,22 @@ int main()
 		freopen(fn ".in", "r", stdin);
 		freopen(fn ".out", "w", stdout);
 	#endif
-	scanf(I64 I64 I64 I64, &n, &a, &b, &c);
-	ll ans1 = cnt(n, a);
-	ll ans2 = 0ll;
-	if (b <= n)
+	scanf(I64, &x);
+	x *= -1;
+	x %= 360;
+	if (x < 0)
+		x += 360;
+	y = min(360 - x, x), ans = 0;
+//	printf(I64 "\n", x);
+	for (int i = 1; i < 4; i++)
 	{
-		ans2 = cnt(n - b, b - c) + 1;
-		ans2 += (n - ans2 * b + ans2 * c) / a;
+		x += 90;
+		if (x >= 360)
+			x -= 360;
+//		printf(I64 " " I64 "\n", x, 360ll - x);
+		if (umin(y, min(360ll - x, x)))
+			ans = i;
 	}
-	printf(I64, max(ans1, ans2));
+	printf("%d", ans);
 }
+

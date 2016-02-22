@@ -9,7 +9,7 @@ typedef map <int, int> mii;
 typedef pair <int, int> pii;
 typedef pair <ll, ll> pll;
 
-int const maxn = int(1e5 + 12);
+int const maxn = 505;
 int const maxb = int(2e6 + 12);
 int const inf = int(1e9 + 7);
 ll const linf = ll(1e18 + 12);
@@ -41,14 +41,11 @@ bool umin(T & a, T b)
 	return a > b ? (a = b, 1) : 0;
 }
 
-ll n, a, b, c;
+#define get(a, x1, y1, x2, y2) (a[x1 - 1][y1 - 1] + a[x2][y2] - a[x1 - 1][y2] - a[x2][y1 - 1])
 
-ll cnt(ll x, ll y)
-{
-	if (x < 0)
-		return 0ll;
-	return x / y;
-}
+char s[maxn][maxn];
+int n, m;
+int a[maxn][maxn], ver[maxn][maxn], hor[maxn][maxn];
 
 int main()
 {
@@ -56,13 +53,22 @@ int main()
 		freopen(fn ".in", "r", stdin);
 		freopen(fn ".out", "w", stdout);
 	#endif
-	scanf(I64 I64 I64 I64, &n, &a, &b, &c);
-	ll ans1 = cnt(n, a);
-	ll ans2 = 0ll;
-	if (b <= n)
+	scanf("%d%d", &n, &m);
+	for (int i = 1; i <= n; i++)
+		scanf("%s", s[i] + 1);
+	for (int i = 1; i <= n; i++)
+		for (int j = 1; j <= m; j++)
+		{
+			a[i][j] = s[i][j] == '.';
+			ver[i][j] = (a[i][j] && a[i - 1][j]) - ver[i - 1][j - 1] + ver[i - 1][j] + ver[i][j - 1];
+			hor[i][j] = (a[i][j] && a[i][j - 1]) - hor[i - 1][j - 1] + hor[i - 1][j] + hor[i][j - 1];
+		}
+	int m, r1, c1, r2, c2;
+	scanf("%d", &m);
+	for (int i = 1; i <= m; i++)
 	{
-		ans2 = cnt(n - b, b - c) + 1;
-		ans2 += (n - ans2 * b + ans2 * c) / a;
+		scanf("%d%d%d%d", &r1, &c1, &r2, &c2);
+		printf("%d\n", get(ver, r1 + 1, c1, r2, c2) + get(hor, r1, c1 + 1, r2, c2));
 	}
-	printf(I64, max(ans1, ans2));
 }
+

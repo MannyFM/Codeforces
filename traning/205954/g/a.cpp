@@ -41,13 +41,14 @@ bool umin(T & a, T b)
 	return a > b ? (a = b, 1) : 0;
 }
 
-ll n, a, b, c;
+int n, a[maxn], m;
+bitset <1010> dp;
 
-ll cnt(ll x, ll y)
+void out(const bitset <1010> & d)
 {
-	if (x < 0)
-		return 0ll;
-	return x / y;
+	for (int i = 0; i < m; i++)
+		printf("%d ", d[i] + 0);
+	puts("");
 }
 
 int main()
@@ -56,13 +57,23 @@ int main()
 		freopen(fn ".in", "r", stdin);
 		freopen(fn ".out", "w", stdout);
 	#endif
-	scanf(I64 I64 I64 I64, &n, &a, &b, &c);
-	ll ans1 = cnt(n, a);
-	ll ans2 = 0ll;
-	if (b <= n)
+	scanf("%d%d", &n, &m);
+	for (int i = 1; i <= n; i++)
+		scanf("%d", a + i), a[i] %= m;
+	for (int i = 1; i <= n; i++)
 	{
-		ans2 = cnt(n - b, b - c) + 1;
-		ans2 += (n - ans2 * b + ans2 * c) / a;
+//		printf("%d:\n", a[i]);
+//		out(dp);
+//		puts("+");
+//		out(dp << a[i]);
+//		puts("+");
+//		out(dp >> (m - a[i]));
+//		puts("=");
+		dp |= (dp << a[i]) | (dp >> (m - a[i]));
+		dp[a[i]] = 1;
+//		out(dp);
+//		puts("\n");
 	}
-	printf(I64, max(ans1, ans2));
+	puts(dp[0] ? "YES" : "NO");
 }
+

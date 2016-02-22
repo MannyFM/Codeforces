@@ -41,13 +41,25 @@ bool umin(T & a, T b)
 	return a > b ? (a = b, 1) : 0;
 }
 
-ll n, a, b, c;
+int n, m;
+char s[maxn];
+int p, q;
+ll dp[2050][4050];
+int shift = 2010;
 
-ll cnt(ll x, ll y)
+ll rec(int len, int bal)
 {
-	if (x < 0)
-		return 0ll;
-	return x / y;
+	if (abs(bal) > len)
+		return 0;
+	if (!len)
+		return !bal;
+	ll & ans = dp[len][bal + shift];
+	if (ans != -1)
+		return ans;
+	ans = rec(len - 1, bal - 1) + rec(len - 1, bal + 1);
+	if (ans >= inf)
+		ans -= inf;
+	return ans;
 }
 
 int main()
@@ -56,13 +68,28 @@ int main()
 		freopen(fn ".in", "r", stdin);
 		freopen(fn ".out", "w", stdout);
 	#endif
-	scanf(I64 I64 I64 I64, &n, &a, &b, &c);
-	ll ans1 = cnt(n, a);
-	ll ans2 = 0ll;
-	if (b <= n)
+	scanf("%d%d", &n, &m);
+	scanf("%s", s + 1);
+	int bal = 0;
+	for (int i = 1; i <= m; i++)
 	{
-		ans2 = cnt(n - b, b - c) + 1;
-		ans2 += (n - ans2 * b + ans2 * c) / a;
+		if (s[i] == '(')
+			bal++;
+		if (s[i] == ')')
+			bal--;
+		umin(p, bal);
 	}
-	printf(I64, max(ans1, ans2));
+	memset(dp, -1, sizeof(dp));
+	int N = n - m;
+	ll ans = 0ll;
+	for (int i = 0; i <= N; i++)
+	{
+		for (int j = 0; j <= i; j++)
+			if (p + j >= 0)
+			{
+				ans = (ans + rec(i, j) * rec(N - i, bal + j)) % inf;
+			}
+	}
+	printf(I64, ans);
 }
+

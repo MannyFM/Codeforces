@@ -41,14 +41,13 @@ bool umin(T & a, T b)
 	return a > b ? (a = b, 1) : 0;
 }
 
-ll n, a, b, c;
-
-ll cnt(ll x, ll y)
+int lcm(int a, int b)
 {
-	if (x < 0)
-		return 0ll;
-	return x / y;
+	return a / __gcd(a, b) * b;
 }
+
+ll n;
+int a[] = {2, 3, 4, 5, 6, 7, 8, 9, 10};
 
 int main()
 {
@@ -56,13 +55,19 @@ int main()
 		freopen(fn ".in", "r", stdin);
 		freopen(fn ".out", "w", stdout);
 	#endif
-	scanf(I64 I64 I64 I64, &n, &a, &b, &c);
-	ll ans1 = cnt(n, a);
-	ll ans2 = 0ll;
-	if (b <= n)
+	scanf(I64, &n);
+	ll ans = 0;
+	for (int mask = 0; mask < (1 << 9); mask++)
 	{
-		ans2 = cnt(n - b, b - c) + 1;
-		ans2 += (n - ans2 * b + ans2 * c) / a;
+		int l = 1;
+		for (int i = 0; i < 9; i++)
+			if (mask & (1 << i))
+				l = lcm(l, a[i]);
+		if (__builtin_popcount(mask) & 1)
+			ans -= n / l;
+		else
+			ans += n / l;
 	}
-	printf(I64, max(ans1, ans2));
+	printf(I64, ans);
 }
+

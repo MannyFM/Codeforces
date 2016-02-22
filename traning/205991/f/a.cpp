@@ -41,14 +41,8 @@ bool umin(T & a, T b)
 	return a > b ? (a = b, 1) : 0;
 }
 
-ll n, a, b, c;
-
-ll cnt(ll x, ll y)
-{
-	if (x < 0)
-		return 0ll;
-	return x / y;
-}
+int n, x[maxn], h[maxn];
+map <int, int> dp;
 
 int main()
 {
@@ -56,13 +50,42 @@ int main()
 		freopen(fn ".in", "r", stdin);
 		freopen(fn ".out", "w", stdout);
 	#endif
-	scanf(I64 I64 I64 I64, &n, &a, &b, &c);
-	ll ans1 = cnt(n, a);
-	ll ans2 = 0ll;
-	if (b <= n)
+	scanf("%d", &n);
+	for (int i = 1; i <= n; i++)
+		scanf("%d%d", x + i, h + i);
+	for (int i = 1; i <= n; i++)
 	{
-		ans2 = cnt(n - b, b - c) + 1;
-		ans2 += (n - ans2 * b + ans2 * c) / a;
+		printf("%d %d: ", x[i], h[i]);
+		if (!dp.count(x[i]))
+			dp[x[i]] = 1;
+		if (!dp.count(x[i] + h[i]))
+			dp[x[i] + h[i]] = 1;
+		auto it = dp.lower_bound(x[i] - h[i]);
+		if (!dp.empty())
+		{
+			if (it != dp.begin())
+				it--;
+			printf("+%d", it -> F);
+			if (it -> F < x[i] - h[i])
+				umax(dp[x[i]], it -> S + 1);
+			if (it -> F < x[i])
+				umax(dp[x[i]], it -> S);
+		}
+		it = dp.lower_bound(x[i]);
+		if (!dp.empty())
+		{
+			if (it != dp.begin())
+				it--;
+			printf(" %d:", it -> F);
+			if (it -> F < x[i])
+				umax(dp[x[i]], it -> S + 1),
+				umax(dp[x[i] + h[i]], it -> S + 1);
+		}
+		for (pii y : dp)
+			printf("(%d %d) ", y.F, y.S);
+		puts("");
 	}
-	printf(I64, max(ans1, ans2));
+	auto it = dp.end(); it--;
+	printf("%d", it -> S);
 }
+

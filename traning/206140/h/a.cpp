@@ -9,7 +9,7 @@ typedef map <int, int> mii;
 typedef pair <int, int> pii;
 typedef pair <ll, ll> pll;
 
-int const maxn = int(1e5 + 12);
+int const maxn = 2050;
 int const maxb = int(2e6 + 12);
 int const inf = int(1e9 + 7);
 ll const linf = ll(1e18 + 12);
@@ -41,13 +41,30 @@ bool umin(T & a, T b)
 	return a > b ? (a = b, 1) : 0;
 }
 
-ll n, a, b, c;
+int n, k;
+vector <int> v[maxn];
+ll dp[maxn][maxn];
 
-ll cnt(ll x, ll y)
+inline void norm(ll & x)
 {
-	if (x < 0)
-		return 0ll;
-	return x / y;
+	while (x >= inf)
+		x -= inf;
+}
+
+ll rec(int pos, int last)
+{
+	if (pos == 1)
+		return 1;
+	ll & ans = dp[pos][last];
+	if (ans != -1)
+		return ans;
+	ans = 0ll;
+	for (int x : v[last])
+	{
+		ans += rec(pos - 1, x);
+		norm(ans);
+	}
+	return ans;
 }
 
 int main()
@@ -56,13 +73,25 @@ int main()
 		freopen(fn ".in", "r", stdin);
 		freopen(fn ".out", "w", stdout);
 	#endif
-	scanf(I64 I64 I64 I64, &n, &a, &b, &c);
-	ll ans1 = cnt(n, a);
-	ll ans2 = 0ll;
-	if (b <= n)
+	scanf("%d%d", &n, &k);
+	for (int i = 1; i <= n; i++)
 	{
-		ans2 = cnt(n - b, b - c) + 1;
-		ans2 += (n - ans2 * b + ans2 * c) / a;
+		for (int x = 1; x * x <= i; x++)
+		{
+			if (i % x)
+				continue;
+			v[i].pb(x);
+			if (x * x != i)
+				v[i].pb(i / x);
+		}
 	}
-	printf(I64, max(ans1, ans2));
+	memset(dp, -1, sizeof(dp));
+	ll ans = 0ll;
+	for (int i = 1; i <= n; i++)
+	{
+		ans += rec(k, i);
+		norm(ans);
+	}
+	printf(I64, ans);
 }
+

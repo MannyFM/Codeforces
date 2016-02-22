@@ -9,7 +9,7 @@ typedef map <int, int> mii;
 typedef pair <int, int> pii;
 typedef pair <ll, ll> pll;
 
-int const maxn = int(1e5 + 12);
+int const maxn = int(5e5 + 12);
 int const maxb = int(2e6 + 12);
 int const inf = int(1e9 + 7);
 ll const linf = ll(1e18 + 12);
@@ -41,14 +41,10 @@ bool umin(T & a, T b)
 	return a > b ? (a = b, 1) : 0;
 }
 
-ll n, a, b, c;
-
-ll cnt(ll x, ll y)
-{
-	if (x < 0)
-		return 0ll;
-	return x / y;
-}
+int n, k, a[maxn];
+int cur;
+map <int, int> cnt;
+int L, R, ans;
 
 int main()
 {
@@ -56,13 +52,37 @@ int main()
 		freopen(fn ".in", "r", stdin);
 		freopen(fn ".out", "w", stdout);
 	#endif
-	scanf(I64 I64 I64 I64, &n, &a, &b, &c);
-	ll ans1 = cnt(n, a);
-	ll ans2 = 0ll;
-	if (b <= n)
+	scanf("%d%d", &n, &k);
+	for (int i = 1; i <= n; i++)
+		scanf("%d", a + i);
+	int j = 1;
+	for (int i = 1; i <= n; i++)
 	{
-		ans2 = cnt(n - b, b - c) + 1;
-		ans2 += (n - ans2 * b + ans2 * c) / a;
+		if (i > 1)
+		{
+			cnt[a[i - 1]]--;
+			if (!cnt[a[i - 1]])
+				cur--;
+		}
+		while (j <= n)
+		{
+			cnt[a[j]]++;
+			if (cnt[a[j]] == 1)
+				cur++;
+			if (cur > k)
+			{
+				cur--;
+				cnt[a[j]]--;
+				j--;
+				break;
+			}
+			j++;
+		}
+//		printf("[%d %d %d] ", i, j, cur);
+		if (umax(ans, min(j, n) - i + 1))
+			L = i, R = min(j, n);
+		j++;
 	}
-	printf(I64, max(ans1, ans2));
+	printf("%d %d", L, R);
 }
+
