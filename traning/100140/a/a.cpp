@@ -20,7 +20,7 @@ typedef map<int, int> mii;
 typedef pair<int, int> pii;
 typedef pair<ll, ll> pll;
 
-int const maxn = int(2e5 + 12);
+int const maxn = int(1e5 + 12);
 int const maxlen = int(2e6 + 12);
 int const inf = int(1e9 + 7);
 ll const linf = ll(1e18 + 12);
@@ -54,38 +54,42 @@ template <typename T> bool umax(T &a, T b) { return a < b ? (a = b, 1) : 0; }
 
 template <typename T> bool umin(T &a, T b) { return a > b ? (a = b, 1) : 0; }
 
-int n, m, k;
-int boss[maxn], sz[maxn];
-int clr[maxn];
+struct edge {
+	int to;
+	ll c, f;
+	int rv;
+};
 
-int who(int l) {
-	if (boss[l] == l)
-		return l;
-	return boss[l] = who(boss[l]);
-}
-
-void merge(int l, int r) {
-	l = who(l);
-	r = who(r);
-	if (l == r)
-		return;
-	if (sz[l] > sz[r])
-		swap(l, r);
-	boss[l] = r;
-	if (sz[l] == sz[r])
-		sz[r]++;
-}
-
-vector <int> g[maxn];
+int n, m;
+int s, t;
 int us[maxn];
-map <int, int> cnt;
+vector <edge> g[maxn];
 
-void dfs(int v) {
+void add_edge(int s, int t, int c) {
+	edge a = {t, c, 0, (int)g[t].size()};
+	edge b = {s, 0, 0, (int)g[s].size()};
+	g[s].pb(a);
+	g[t].pb(b);
+};
+
+ll dfs(int v, ll flow) {
+//	printf("%d " I64 "\n", v, flow);
+	if (v == t || !flow)
+		return flow;
 	us[v] = 1;
-	cnt[clr[v]]++;
-	for (int to : g[v])
-		if (!us[to])
-			dfs(to);
+	for (int i = 0; i < (int)g[v].size(); i++) {
+		int & to = g[v][i].to;
+		if (us[to] || g[v][i].c <= g[v][i].f)
+			continue;
+		ll now = dfs(to, min(flow, g[v][i].c - g[v][i].f));
+		if (!now)
+			continue;
+		int j = g[v][i].rv;
+		g[v][i].f += now;
+		g[to][j].f -= now;
+		return now;
+	}
+	return 0;
 }
 
 int main() {
@@ -93,32 +97,22 @@ int main() {
   freopen(fn ".in", "r", stdin);
   freopen(fn ".out", "w", stdout);
 #endif
-	scanf("%d%d%d", &n, &m, &k);
-	for (int i = 1; i <= n; i++)
-		scanf("%d", clr + i), boss[i] = i;
+	scanf("%d%d", &n, &m);
 	for (int i = 1; i <= m; i++) {
-		int l, r;
-		scanf("%d%d", &l, &r);
-		merge(l, r);
+		int a, b, c;
+		scanf("%d%d%d", &a, &b, &c);
+		add_edge(a, b, c);
+		add_edge(b, a, c);
 	}
-	set <int> bosses;
-	for (int i = 1; i <= n; i++) {
-		int bs = who(i);
-		bosses.insert(bs);
-		g[bs].pb(i);
-//		printf("%d -> %d\n", bs, i);
+	s = 1, t = n;
+	ll ans = 0;
+	while (1) {
+		ll flow = dfs(s, linf);
+		if (!flow)
+			break;
+		ans += flow;
+		for (int i = 1; i <= n; i++)
+			us[i] = 0;
 	}
-	int ans = 0;
-	for (int i : bosses) {
-		dfs(i);
-		int mx = -inf, all = 0;
-		for (pii x: cnt) {
-			all += x.S;
-			umax(mx, x.S);
-		}
-//		printf("%d: [%d %d]\n", i, mx, all);
-		cnt.clear();
-		ans += all - mx;
-	}
-	printf("%d", ans);
+	printf(I64, ans);
 }

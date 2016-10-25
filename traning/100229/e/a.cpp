@@ -20,7 +20,7 @@ typedef map<int, int> mii;
 typedef pair<int, int> pii;
 typedef pair<ll, ll> pll;
 
-int const maxn = int(2e5 + 12);
+int const maxn = int(1e5 + 12);
 int const maxlen = int(2e6 + 12);
 int const inf = int(1e9 + 7);
 ll const linf = ll(1e18 + 12);
@@ -48,44 +48,53 @@ ld const pi = 3.1415926535897932384626433832795l;
     puts(x);                                                                   \
     exit(0);                                                                   \
   }
-//#define fn ""
+#define fn "inevit"
 
 template <typename T> bool umax(T &a, T b) { return a < b ? (a = b, 1) : 0; }
 
 template <typename T> bool umin(T &a, T b) { return a > b ? (a = b, 1) : 0; }
 
-int n, m, k;
-int boss[maxn], sz[maxn];
-int clr[maxn];
+int n, m;
+int is[maxn];
+vector <pii> g[maxn];
+vector <int> ans;
+int us[maxn], tin[maxn], fup[maxn], timer;
 
-int who(int l) {
-	if (boss[l] == l)
-		return l;
-	return boss[l] = who(boss[l]);
-}
-
-void merge(int l, int r) {
-	l = who(l);
-	r = who(r);
-	if (l == r)
-		return;
-	if (sz[l] > sz[r])
-		swap(l, r);
-	boss[l] = r;
-	if (sz[l] == sz[r])
-		sz[r]++;
-}
-
-vector <int> g[maxn];
-int us[maxn];
-map <int, int> cnt;
-
-void dfs(int v) {
+void dfs(int v, int p = -1) {
 	us[v] = 1;
-	cnt[clr[v]]++;
-	for (int to : g[v])
-		if (!us[to])
-			dfs(to);
+	tin[v] = fup[v] = timer++;
+	for (pii & x : g[v]) {
+		int & to = x.F;
+		if (to == p)
+			continue;
+		if (us[to])
+			umin(fup[v], tin[to]);
+		else {
+			dfs(to, v);
+			umin(fup[v], fup[to]);
+			if (fup[to] > tin[v]) {
+				is[x.S] = 1;
+			}
+		}
+	}
+//	printf("%d: t:%d f:%d\n", v, tin[v], fup[v]);
+}
+
+int S, T;
+
+bool dfs2(int v) {
+	if (v == T)
+		return 1;
+	us[v] = 1;
+	for (pii & x : g[v]) {
+		int & to = x.F;
+		if (!us[to] && dfs2(to)) {
+			if (is[x.S])
+				ans.pb(x.S);
+			return 1;
+		}
+	}
+	return 0;
 }
 
 int main() {
@@ -93,32 +102,20 @@ int main() {
   freopen(fn ".in", "r", stdin);
   freopen(fn ".out", "w", stdout);
 #endif
-	scanf("%d%d%d", &n, &m, &k);
-	for (int i = 1; i <= n; i++)
-		scanf("%d", clr + i), boss[i] = i;
+	scanf("%d%d", &n, &m);
 	for (int i = 1; i <= m; i++) {
-		int l, r;
-		scanf("%d%d", &l, &r);
-		merge(l, r);
+		int x, y;
+		scanf("%d%d", &x, &y);
+		g[x].pb({y, i});
+		g[y].pb({x, i});
 	}
-	set <int> bosses;
-	for (int i = 1; i <= n; i++) {
-		int bs = who(i);
-		bosses.insert(bs);
-		g[bs].pb(i);
-//		printf("%d -> %d\n", bs, i);
-	}
-	int ans = 0;
-	for (int i : bosses) {
-		dfs(i);
-		int mx = -inf, all = 0;
-		for (pii x: cnt) {
-			all += x.S;
-			umax(mx, x.S);
-		}
-//		printf("%d: [%d %d]\n", i, mx, all);
-		cnt.clear();
-		ans += all - mx;
-	}
-	printf("%d", ans);
+	S = 1, T = n;
+	dfs(S);
+	memset(us, 0, sizeof(us));
+	
+	dfs2(S);
+	sort(all(ans));
+	printf("%d\n", (int)ans.size());
+	for (int x : ans)
+		printf("%d ", x);
 }

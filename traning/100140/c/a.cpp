@@ -20,7 +20,7 @@ typedef map<int, int> mii;
 typedef pair<int, int> pii;
 typedef pair<ll, ll> pll;
 
-int const maxn = int(2e5 + 12);
+int const maxn = int(1e5 + 12);
 int const maxlen = int(2e6 + 12);
 int const inf = int(1e9 + 7);
 ll const linf = ll(1e18 + 12);
@@ -54,71 +54,21 @@ template <typename T> bool umax(T &a, T b) { return a < b ? (a = b, 1) : 0; }
 
 template <typename T> bool umin(T &a, T b) { return a > b ? (a = b, 1) : 0; }
 
-int n, m, k;
-int boss[maxn], sz[maxn];
-int clr[maxn];
-
-int who(int l) {
-	if (boss[l] == l)
-		return l;
-	return boss[l] = who(boss[l]);
-}
-
-void merge(int l, int r) {
-	l = who(l);
-	r = who(r);
-	if (l == r)
-		return;
-	if (sz[l] > sz[r])
-		swap(l, r);
-	boss[l] = r;
-	if (sz[l] == sz[r])
-		sz[r]++;
-}
-
-vector <int> g[maxn];
-int us[maxn];
-map <int, int> cnt;
-
-void dfs(int v) {
-	us[v] = 1;
-	cnt[clr[v]]++;
-	for (int to : g[v])
-		if (!us[to])
-			dfs(to);
-}
+int n, m, cnt[maxn];
 
 int main() {
 #ifdef fn
   freopen(fn ".in", "r", stdin);
   freopen(fn ".out", "w", stdout);
 #endif
-	scanf("%d%d%d", &n, &m, &k);
-	for (int i = 1; i <= n; i++)
-		scanf("%d", clr + i), boss[i] = i;
+	scanf("%d%d", &n, &m);
 	for (int i = 1; i <= m; i++) {
-		int l, r;
-		scanf("%d%d", &l, &r);
-		merge(l, r);
+		int x, y;
+		scanf("%d%d", &x, &y);
+		cnt[x]++, cnt[y]++;
 	}
-	set <int> bosses;
-	for (int i = 1; i <= n; i++) {
-		int bs = who(i);
-		bosses.insert(bs);
-		g[bs].pb(i);
-//		printf("%d -> %d\n", bs, i);
-	}
-	int ans = 0;
-	for (int i : bosses) {
-		dfs(i);
-		int mx = -inf, all = 0;
-		for (pii x: cnt) {
-			all += x.S;
-			umax(mx, x.S);
-		}
-//		printf("%d: [%d %d]\n", i, mx, all);
-		cnt.clear();
-		ans += all - mx;
-	}
+	int ans = m;
+	for (int i = 1; i <= n; i++)
+		umin(ans, cnt[i]);
 	printf("%d", ans);
 }

@@ -20,7 +20,7 @@ typedef map<int, int> mii;
 typedef pair<int, int> pii;
 typedef pair<ll, ll> pll;
 
-int const maxn = int(2e5 + 12);
+int const maxn = 150 * 1000 + 10;
 int const maxlen = int(2e6 + 12);
 int const inf = int(1e9 + 7);
 ll const linf = ll(1e18 + 12);
@@ -54,71 +54,101 @@ template <typename T> bool umax(T &a, T b) { return a < b ? (a = b, 1) : 0; }
 
 template <typename T> bool umin(T &a, T b) { return a > b ? (a = b, 1) : 0; }
 
-int n, m, k;
-int boss[maxn], sz[maxn];
-int clr[maxn];
+struct item {
+	item *l, *r;
+	int val;
+	item () : l(0), r(0), val(0) {}
+	item(int x) : l(0), r(0), val(x) {}
+	item(item * l, item * r, int x) : l(l), r(r), val(x) {}
+};
 
-int who(int l) {
-	if (boss[l] == l)
-		return l;
-	return boss[l] = who(boss[l]);
-}
+typedef item * pitem;
+//vector <item> all;
 
-void merge(int l, int r) {
-	l = who(l);
-	r = who(r);
-	if (l == r)
-		return;
-	if (sz[l] > sz[r])
-		swap(l, r);
-	boss[l] = r;
-	if (sz[l] == sz[r])
-		sz[r]++;
-}
+struct D {
+	int sz;
+	pitem head, tail;
+	D() {
+		head = tail = 0;
+	}
+	void push_front(int x) {
+		pitem it = new item(0, head, x);
+		head = it;
+		if (it -> r)
+			it -> r -> l = it;
+		if (!sz)
+			tail = it;
+		sz++;
+	}
+	void push_back(int x) {
+		pitem it = new item(tail, 0, x);
+		tail = it;
+		if (it -> l)
+			it -> l -> r = it;
+		if (!sz)
+			head = it;
+		sz++;
+	}
+	int pop_front() {
+		assert(head);
+		pitem it = head;
+		head = it -> r;
+		if (it -> r)
+			it -> r -> l = 0;
+		sz--;
+		if (!sz)
+			tail = 0;
+		int ans = it -> val;
+		delete it;
+		return ans;
+	}
+	int pop_back() {
+		assert(tail);
+		pitem it = tail;
+		tail = it -> l;
+		if (it -> l)
+			it -> l -> r = 0;
+		sz--;
+		if (!sz)
+			head = 0;
+		int ans = it -> val;
+		delete it;
+		return ans;
+	}
+};
 
-vector <int> g[maxn];
-int us[maxn];
-map <int, int> cnt;
-
-void dfs(int v) {
-	us[v] = 1;
-	cnt[clr[v]]++;
-	for (int to : g[v])
-		if (!us[to])
-			dfs(to);
-}
+D * a[maxn];
+//int l = maxn, r = maxn;
+char s[100];
+int x, y, n;
 
 int main() {
 #ifdef fn
   freopen(fn ".in", "r", stdin);
   freopen(fn ".out", "w", stdout);
 #endif
-	scanf("%d%d%d", &n, &m, &k);
-	for (int i = 1; i <= n; i++)
-		scanf("%d", clr + i), boss[i] = i;
-	for (int i = 1; i <= m; i++) {
-		int l, r;
-		scanf("%d%d", &l, &r);
-		merge(l, r);
-	}
-	set <int> bosses;
+	scanf("%d", &n);
 	for (int i = 1; i <= n; i++) {
-		int bs = who(i);
-		bosses.insert(bs);
-		g[bs].pb(i);
-//		printf("%d -> %d\n", bs, i);
-	}
-	int ans = 0;
-	for (int i : bosses) {
-		dfs(i);
-		int mx = -inf, all = 0;
-		for (pii x: cnt) {
-			all += x.S;
-			umax(mx, x.S);
+		scanf("%s %d", s, &x);
+		if (s[4] == 'f') {
+			scanf("%d", &y);
+			if (!a[x])
+				a[x] = new D();
+			a[x] -> push_front(y);
 		}
-//		printf("%d: [%d %d]\n", i, mx, all);
-		cnt.clear();
-		ans += all - mx;
+		if (s[4] == 'b') {
+			scanf("%d", &y);
+			if (!a[x])
+				a[x] = new D();
+			a[x] -> push_back(y);
+		}
+		if (s[3] == 'f') {
+			assert(a[x]);
+			printf("%d\n", a[x] -> pop_front());
+		}
+		if (s[3] == 'b') {
+			assert(a[x]);
+			printf("%d\n", a[x] -> pop_back());
+		}
 	}
-	printf("%d", ans);
 }

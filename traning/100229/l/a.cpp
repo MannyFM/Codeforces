@@ -20,7 +20,7 @@ typedef map<int, int> mii;
 typedef pair<int, int> pii;
 typedef pair<ll, ll> pll;
 
-int const maxn = int(2e5 + 12);
+int const maxn = int(1e5 + 12);
 int const maxlen = int(2e6 + 12);
 int const inf = int(1e9 + 7);
 ll const linf = ll(1e18 + 12);
@@ -54,38 +54,15 @@ template <typename T> bool umax(T &a, T b) { return a < b ? (a = b, 1) : 0; }
 
 template <typename T> bool umin(T &a, T b) { return a > b ? (a = b, 1) : 0; }
 
-int n, m, k;
-int boss[maxn], sz[maxn];
-int clr[maxn];
+int n, m;
+int boss[maxn];
+vector <pii> g[maxn];
 
-int who(int l) {
-	if (boss[l] == l)
-		return l;
-	return boss[l] = who(boss[l]);
-}
-
-void merge(int l, int r) {
-	l = who(l);
-	r = who(r);
-	if (l == r)
-		return;
-	if (sz[l] > sz[r])
-		swap(l, r);
-	boss[l] = r;
-	if (sz[l] == sz[r])
-		sz[r]++;
-}
-
-vector <int> g[maxn];
-int us[maxn];
-map <int, int> cnt;
-
-void dfs(int v) {
-	us[v] = 1;
-	cnt[clr[v]]++;
-	for (int to : g[v])
-		if (!us[to])
-			dfs(to);
+void add_edge(int x, int y) {
+	int cost = boss[x] != boss[y];
+	if (x % 2 == 0)
+		cost *= 2;
+	g[x].pb({y, cost});
 }
 
 int main() {
@@ -93,32 +70,46 @@ int main() {
   freopen(fn ".in", "r", stdin);
   freopen(fn ".out", "w", stdout);
 #endif
-	scanf("%d%d%d", &n, &m, &k);
+	scanf("%d%d", &n, &m);
 	for (int i = 1; i <= n; i++)
-		scanf("%d", clr + i), boss[i] = i;
+		scanf("%d", boss + i);
 	for (int i = 1; i <= m; i++) {
-		int l, r;
-		scanf("%d%d", &l, &r);
-		merge(l, r);
+		int x, y;
+		scanf("%d%d", &x, &y);
+		add_edge(x, y);
+		add_edge(y, x);
 	}
-	set <int> bosses;
-	for (int i = 1; i <= n; i++) {
-		int bs = who(i);
-		bosses.insert(bs);
-		g[bs].pb(i);
-//		printf("%d -> %d\n", bs, i);
-	}
-	int ans = 0;
-	for (int i : bosses) {
-		dfs(i);
-		int mx = -inf, all = 0;
-		for (pii x: cnt) {
-			all += x.S;
-			umax(mx, x.S);
+
+	int s = 1, t = n;
+	vector <int> d(n + 1, inf), pr(n + 1, -1);
+	d[s] = 0;
+	set <pii> se;
+	se.insert({d[s], s});
+	while (!se.empty()) {
+		int x = se.begin() -> S;
+		se.erase(se.begin());
+		for (pii y : g[x]) {
+			int to = y.F, cost = y.S;
+			if (d[to] > d[x] + cost) {
+				se.erase({d[to], to});
+				d[to] = d[x] + cost;
+				pr[to] = x;
+				se.insert({d[to], to});
+			}
 		}
-//		printf("%d: [%d %d]\n", i, mx, all);
-		cnt.clear();
-		ans += all - mx;
 	}
-	printf("%d", ans);
+	if (d[t] == inf) {
+		rt("impossible");
+	}
+	vector <int> path;
+	int x = t;
+	do {
+		path.pb(x);
+		x = pr[x];
+	} while (x != s);
+	path.pb(s);
+	reverse(all(path));
+	printf("%d %d\n", d[t], (int)path.size());
+	for (int x : path)
+		printf("%d ", x);
 }

@@ -56,37 +56,26 @@ template <typename T> bool umin(T &a, T b) { return a > b ? (a = b, 1) : 0; }
 
 int n, m, k;
 int boss[maxn], sz[maxn];
-int clr[maxn];
 
-int who(int l) {
-	if (boss[l] == l)
-		return l;
-	return boss[l] = who(boss[l]);
+int who(int x) {
+	if (x == boss[x])
+		return x;
+	return boss[x] = who(boss[x]);
 }
 
-void merge(int l, int r) {
-	l = who(l);
-	r = who(r);
-	if (l == r)
+void merge(int x, int y) {
+	x = who(x);
+	y = who(y);
+	if (x == y)
 		return;
-	if (sz[l] > sz[r])
-		swap(l, r);
-	boss[l] = r;
-	if (sz[l] == sz[r])
-		sz[r]++;
+	if (sz[x] > sz[y])
+		swap(x, y);
+	boss[x] = y;
+	if (sz[x] == sz[y])
+		sz[y]++;
 }
 
-vector <int> g[maxn];
-int us[maxn];
-map <int, int> cnt;
-
-void dfs(int v) {
-	us[v] = 1;
-	cnt[clr[v]]++;
-	for (int to : g[v])
-		if (!us[to])
-			dfs(to);
-}
+int t[maxn], x[maxn], y[maxn], ans[maxn];
 
 int main() {
 #ifdef fn
@@ -95,30 +84,24 @@ int main() {
 #endif
 	scanf("%d%d%d", &n, &m, &k);
 	for (int i = 1; i <= n; i++)
-		scanf("%d", clr + i), boss[i] = i;
+		boss[i] = i;
 	for (int i = 1; i <= m; i++) {
-		int l, r;
-		scanf("%d%d", &l, &r);
-		merge(l, r);
+		int a, b;
+		scanf("%d%d", &a, &b);
 	}
-	set <int> bosses;
-	for (int i = 1; i <= n; i++) {
-		int bs = who(i);
-		bosses.insert(bs);
-		g[bs].pb(i);
-//		printf("%d -> %d\n", bs, i);
+	for (int i = 1; i <= k; i++) {
+		char s[100];
+		scanf("%s %d %d", s, x + i, y + i);
+		t[i] = s[0] == 'c';
 	}
-	int ans = 0;
-	for (int i : bosses) {
-		dfs(i);
-		int mx = -inf, all = 0;
-		for (pii x: cnt) {
-			all += x.S;
-			umax(mx, x.S);
-		}
-//		printf("%d: [%d %d]\n", i, mx, all);
-		cnt.clear();
-		ans += all - mx;
+	for (int i = k; i > 0; i--) {
+		if (t[i])
+			merge(x[i], y[i]);
+		else
+			ans[i] = who(x[i]) == who(y[i]);
 	}
-	printf("%d", ans);
+	for (int i = 1; i <= k; i++)
+		if (!t[i])
+			puts(ans[i] ? "YES" : "NO");
+	return 0;
 }
