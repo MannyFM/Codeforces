@@ -54,22 +54,70 @@ template <typename T> bool umax(T &a, T b) { return a < b ? (a = b, 1) : 0; }
 
 template <typename T> bool umin(T &a, T b) { return a > b ? (a = b, 1) : 0; }
 
-int n, m, a[maxn];
-int mn;
+int const k_mx = 22;
+int n, m;
+int a[maxn];
+int P[maxn];
+ll D[maxn];
+vector <pii> g[maxn];
+
+int path[maxn], N;
+int pre[maxn], ans[maxn];
+
+int solve(int v) {
+	path[++N] = v;
+	int l = 0, r = N + 1;
+	while (r - l > 1) {
+		int m = (r + l) >> 1;
+		if (D[path[m]] >= D[v] - a[v])
+			r = m;
+		else
+			l = m;
+	}
+	if (r != N) {
+		pre[v]++;
+		pre[r]--;
+		printf("pre[%d]++;pre[%d]--\n", path[P[r]], v);
+	}
+	printf("%d %d:\n", v, a[v]);
+	for (int i = 1; i <= N; i++)
+		printf("D[%d]=" I64 "\n", path[i], D[path[i]]);
+	printf("%d %d\n", l, r);
+	puts("_________________");
+
+	for (pii to : g[v]) {
+		D[to.F] = D[v] + to.S;
+		ans[v] += solve(to.F);
+	}
+	int was = pre[N];
+	pre[N] = 0;
+	N--;
+	return was;
+}
+
+void GetAns(int v, int sum = 0) {
+	sum += pre[v];
+	ans[v] = sum;
+	for (pii to : g[v])
+		GetAns(to.F, sum);
+}
 
 int main() {
 #ifdef fn
   freopen(fn ".in", "r", stdin);
   freopen(fn ".out", "w", stdout);
 #endif
-	scanf("%d%d", &n, &m);
-	mn = n;
-	for (int i = 1; i <= m; i++) {
-		int l, r;
-		scanf("%d%d", &l, &r);
-		umin(mn, r - l + 1);
-	}
-	printf("%d\n", mn);
+	scanf("%d", &n);
 	for (int i = 1; i <= n; i++)
-			printf("%d ", (i - 1) % mn);
+		scanf("%d", a + i);
+	for (int i = 2; i <= n; i++) {
+		int p, w;
+		scanf("%d%d", &p, &w);
+		g[p].pb({i, w});
+		P[i] = p;
+	}
+	solve(1);
+	GetAns(1, pre[0]);
+	for (int i = 1; i <= n; i++)
+		printf("%d ", ans[i]);
 }

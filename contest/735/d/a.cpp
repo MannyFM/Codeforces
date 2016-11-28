@@ -54,22 +54,33 @@ template <typename T> bool umax(T &a, T b) { return a < b ? (a = b, 1) : 0; }
 
 template <typename T> bool umin(T &a, T b) { return a > b ? (a = b, 1) : 0; }
 
-int n, m, a[maxn];
-int mn;
+set <ll> prs;
+bool isPrime(ll x) {
+	if (prs.count(x))
+		return 1;
+	for (ll i = 2; i * i <= x; i++)
+		if (x % i == 0)
+			return 0;
+	prs.insert(x);
+	return 1;
+}
+
+ll n;
 
 int main() {
 #ifdef fn
   freopen(fn ".in", "r", stdin);
   freopen(fn ".out", "w", stdout);
 #endif
-	scanf("%d%d", &n, &m);
-	mn = n;
-	for (int i = 1; i <= m; i++) {
-		int l, r;
-		scanf("%d%d", &l, &r);
-		umin(mn, r - l + 1);
-	}
-	printf("%d\n", mn);
-	for (int i = 1; i <= n; i++)
-			printf("%d ", (i - 1) % mn);
+	scanf(I64, &n);
+	if (isPrime(n))
+		rt("1");
+	if (n < 4)
+		rt("1");
+	if (n == 4)
+		rt("2");
+	int ans = 2;
+	if ((n & 1) && !isPrime(n - 2))
+		ans = 3;
+	printf("%d", ans);
 }

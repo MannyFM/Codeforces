@@ -54,22 +54,46 @@ template <typename T> bool umax(T &a, T b) { return a < b ? (a = b, 1) : 0; }
 
 template <typename T> bool umin(T &a, T b) { return a > b ? (a = b, 1) : 0; }
 
-int n, m, a[maxn];
-int mn;
+int const k_mx = 22;
+int n, m;
+int pr[k_mx][maxn];
+int a[maxn];
+ll D[maxn];
+vector <pii> g[maxn];
+
+void dfs1(int v) {
+	for (int k = 1; k < k_mx; k++)
+		pr[k][v] = pr[k - 1][pr[k - 1][v]];
+	for (pii to : g[v]) {
+		D[to.F] = D[v] + to.S;
+		dfs1(to.F);
+	}
+}
+
+int solve(int v) {
+	for (int k = k_mx - 1; k >= 0; k--) {
+		if (D[pr[k][v]] >= D[v] - a[v])
+			v = pr[k][v];
+	}
+	return pr[0][v];
+}
 
 int main() {
 #ifdef fn
   freopen(fn ".in", "r", stdin);
   freopen(fn ".out", "w", stdout);
 #endif
-	scanf("%d%d", &n, &m);
-	mn = n;
-	for (int i = 1; i <= m; i++) {
-		int l, r;
-		scanf("%d%d", &l, &r);
-		umin(mn, r - l + 1);
-	}
-	printf("%d\n", mn);
+	scanf("%d", &n);
 	for (int i = 1; i <= n; i++)
-			printf("%d ", (i - 1) % mn);
+		scanf("%d", a + i);
+	for (int i = 2; i <= n; i++) {
+		int p, w;
+		scanf("%d%d", &p, &w);
+		pr[0][i] = p;
+		g[p].pb({i, w});
+	}
+	dfs1(1);
+	for (int i = 1; i <= n; i++) {
+		printf("solve(%d)=%d\n", i, solve(i));
+	}
 }

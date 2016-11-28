@@ -20,7 +20,7 @@ typedef map<int, int> mii;
 typedef pair<int, int> pii;
 typedef pair<ll, ll> pll;
 
-int const maxn = int(1e5 + 12);
+int const maxn = int(3e5 + 12);
 int const maxlen = int(2e6 + 12);
 int const inf = int(1e9 + 7);
 ll const linf = ll(1e18 + 12);
@@ -54,22 +54,94 @@ template <typename T> bool umax(T &a, T b) { return a < b ? (a = b, 1) : 0; }
 
 template <typename T> bool umin(T &a, T b) { return a > b ? (a = b, 1) : 0; }
 
-int n, m, a[maxn];
-int mn;
+struct item {
+	int L, M, R;
+};
+
+item t[4 * maxn];
+ll a[maxn];
+
+template<class T>
+int sign(T x) {
+	return x ? (x < 0 ? -1 : 1) : 0;
+}
+
+void recalc(int v, int tl, int tr) {
+	int tm = (tl + tr) >> 1;
+	t[v].M = max(t[v + v].M, t[v + v + 1].M);
+	if (!a[tm]|| !a[tm + 1] || sign(a[tm]) < sign(a[tm + 1])) {
+		t[v].L = t[v + v].L;
+		t[v].R = t[v + v + 1].R;
+	} else {
+		umax(t[v].M, t[v + v].R + t[v + v + 1].L);
+		t[v].L = t[v + v].L;
+		if (t[v + v].M == tm - tl + 1)
+			t[v].L += t[v + v + 1].L;
+		t[v].R = t[v + v + 1].R;
+		if (t[v + v + 1].M == tr - tm)
+			t[v].R += t[v + v].R;
+	}
+}
+
+void build(int v, int tl, int tr) {
+	if (tl == tr) {
+		int x = !!a[tl];
+		t[v] = {x, x, x};
+//	printf("[%d %d]=%d %d %d\n", tl, tr, t[v].L, t[v].M, t[v].R);
+		return;
+	}
+	int tm = (tl + tr) >> 1;
+	build(v + v, tl, tm);
+	build(v + v + 1, tm + 1, tr);
+	recalc(v, tl, tr);
+//	printf("[%d %d]=%d %d %d\n", tl, tr, t[v].L, t[v].M, t[v].R);
+}
+
+void upd(int v, int tl, int tr, int pos, int d) {
+	if (pos < tl || tr < pos)
+		return;
+	if (tl == tr) {
+		a[tl] += d;
+		int x = !!a[tl];
+		t[v] = {x, x, x};
+		return;
+	}
+	int tm = (tl + tr) >> 1;
+	if (pos <= tm)
+		upd(v + v, tl, tm, pos, d);
+	else
+		upd(v + v + 1, tm + 1, tr, pos, d);
+	recalc(v, tl, tr);
+}
+
+int n, ar[maxn];
+int m;
 
 int main() {
 #ifdef fn
   freopen(fn ".in", "r", stdin);
   freopen(fn ".out", "w", stdout);
 #endif
-	scanf("%d%d", &n, &m);
-	mn = n;
-	for (int i = 1; i <= m; i++) {
-		int l, r;
-		scanf("%d%d", &l, &r);
-		umin(mn, r - l + 1);
-	}
-	printf("%d\n", mn);
+	scanf("%d", &n);
 	for (int i = 1; i <= n; i++)
-			printf("%d ", (i - 1) % mn);
+		scanf("%d", ar + i);
+	for (int i = 1; i < n; i++)
+		a[i] = ar[i + 1] - ar[i];
+	if (n > 1)
+		build(1, 1, n - 1);
+//	printf("%d %d %d\n", t[1].L, t[1].M, t[1].R);
+	scanf("%d", &m);
+	for (int i = 1, l, r, d; i <= m; i++) {
+		scanf("%d%d%d", &l, &r, &d);
+		if (n == 1) {
+			puts("1");
+			continue;
+		}
+		if (l != 1)
+			upd(1, 1, n - 1, l - 1, d);
+		if (r != n)
+			upd(1, 1, n - 1, r, -d);
+		printf("%d\n", t[1].M + 1);
+	}
 }
+

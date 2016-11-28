@@ -54,22 +54,29 @@ template <typename T> bool umax(T &a, T b) { return a < b ? (a = b, 1) : 0; }
 
 template <typename T> bool umin(T &a, T b) { return a > b ? (a = b, 1) : 0; }
 
-int n, m, a[maxn];
-int mn;
+int n, k;
+char s[maxn];
+int x, y;
 
 int main() {
 #ifdef fn
   freopen(fn ".in", "r", stdin);
   freopen(fn ".out", "w", stdout);
 #endif
-	scanf("%d%d", &n, &m);
-	mn = n;
-	for (int i = 1; i <= m; i++) {
-		int l, r;
-		scanf("%d%d", &l, &r);
-		umin(mn, r - l + 1);
+	scanf("%d%d", &n, &k);
+	scanf("%s", s + 1);
+	for (int i = 1; i <= n; i++) {
+		if (s[i] == 'G')
+			x = i;
+		if (s[i] == 'T')
+			y = i;
 	}
-	printf("%d\n", mn);
-	for (int i = 1; i <= n; i++)
-			printf("%d ", (i - 1) % mn);
+	if (x > y)
+		swap(x, y);
+	if ((y - x) % k)
+		rt("NO");
+	for (int i = x + k; i < y; i += k)
+		if (s[i] == '#')
+			rt("NO");
+	puts("YES");
 }
