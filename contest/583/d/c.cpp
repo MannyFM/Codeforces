@@ -25,6 +25,10 @@ double const pi = acos(-1);
 #define S second
 //#define fn ""
 
+template <typename T> bool umax(T &a, T b) { return a < b ? (a = b, 1) : 0; }
+
+template <typename T> bool umin(T &a, T b) { return a > b ? (a = b, 1) : 0; }
+
 int n, t;
 int a[maxn];
 int dp[350];

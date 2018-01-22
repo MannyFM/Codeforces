@@ -17,12 +17,15 @@ int get(int x)
 
 int main()
 {
-	freopen("kth.in", "r", stdin);
-	freopen("kth.txt", "w", stdout);
+//	freopen("kth.in", "r", stdin);
+//	freopen("kth.txt", "w", stdout);
 	scanf("%d%d", &n, &k);
 	vector <int> v;
-	for (int i = 1; i <= n; i++)
+	for (int i = 1; i <= n; i++) {
+//		printf("%d ", get(i));
 		us[get(i)]++;
+	}
+	puts("");
 	int mn = maxn * mod;
 	for (int i = 0; i <= n; i++)
 	{
